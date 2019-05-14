@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon May 13 23:28:06 2019
-
 @author: walte
 """
 
@@ -10,6 +9,8 @@ import arcade
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
 SCREEN_TITLE = "Pong"
+
+MOVEMENT_SPEED = 3
 
 
 class Paddle:
@@ -34,17 +35,17 @@ class Paddle:
         self.position_x += self.change_x
 
         # See if the ball hit the edge of the screen. If so, change direction
-        if self.position_x < self.radius:
-            self.position_x = self.radius
+        if self.position_x < self.width/2:
+            self.position_x = self.width/2
 
-        if self.position_x > SCREEN_WIDTH - self.radius:
-            self.position_x = SCREEN_WIDTH - self.radius
+        if self.position_x > SCREEN_WIDTH - self.width/2:
+            self.position_x = SCREEN_WIDTH - self.width/2
 
-        if self.position_y < self.radius:
-            self.position_y = self.radius
+        if self.position_y < self.height/2:
+            self.position_y = self.height/2
 
-        if self.position_y > SCREEN_HEIGHT - self.radius:
-            self.position_y = SCREEN_HEIGHT - self.radius
+        if self.position_y > SCREEN_HEIGHT - self.height/2:
+            self.position_y = SCREEN_HEIGHT - self.height/2
 
 
 class Ball:
