@@ -11,7 +11,7 @@ SCREEN_HEIGHT = 240
 SCREEN_TITLE = "Pong"
 
 MOVEMENT_SPEED = 2
-PADDLE_MOVEMENT_SPEED = 1.5
+PADDLE_MOVEMENT_SPEED = 1.25
 
 
 PLAYER1_UP = arcade.key.W
@@ -34,6 +34,7 @@ class Paddle:
         self.height = height
         self.color = color
         self.player_number = player_number
+        self.collision = False
         
         if player_number == 1:
             self.up_key = PLAYER1_UP
@@ -82,6 +83,7 @@ class Ball:
         self.width = width
         self.color = color
         self.collision = False
+        self.other_collider = None
 
     def draw(self):
         """ Draw the balls with the instance variables we have. """
@@ -91,8 +93,6 @@ class Ball:
         # Move the ball
 
         # See if the ball hit the edge of the screen. If so, change direction
-        if self.collision == True:
-            self.change_x *= -1
             
         if self.position_x < self.width/2:
             self.position_x = self.width/2
@@ -120,10 +120,19 @@ class Ball:
         
     def check_collision(self, other):
         
-        self.collision =  not (self.top_right_x < other.bottom_left_x or 
+        self.collision = not (self.top_right_x < other.bottom_left_x or 
                                self.bottom_left_x > other.top_right_x or 
                                self.top_right_y < other.bottom_left_y or 
                                self.bottom_left_y > other.top_right_y)
+        
+        if self.collision == True:
+            if self.other_collider is None:
+                self.change_x *= -1
+            self.other_collider = other
+        else:
+            if self.other_collider == other:
+                self.other_collider = None
+                
         return self.collision
 
 class MyGame(arcade.Window):
@@ -140,7 +149,7 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.ASH_GREY)
 
         # Create our ball
-        self.ball = Ball(50, 50, 1, 1, 32, arcade.color.WHITE)
+        self.ball = Ball(50, 50, 1, 1, 16, arcade.color.WHITE)
         self.paddle1 = Paddle(8, 120, 0, 0, 16, 48, arcade.color.BLUE, 1)
         self.paddle2 = Paddle(SCREEN_WIDTH - 8, 120, 0, 0, 16, 48, arcade.color.RED, 2)
 
