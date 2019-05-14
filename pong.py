@@ -5,6 +5,7 @@ Created on Mon May 13 23:28:06 2019
 """
 
 import arcade
+import numpy as np
 
 SCREEN_WIDTH = 320
 SCREEN_HEIGHT = 240
@@ -30,24 +31,13 @@ class Paddle:
         arcade.draw_rectangle_filled(self.position_x, self.position_y, self.width, self.height, self.color)
 
     def update(self):
-        # Move the ball
+        # Move the paddle
         self.position_y += self.change_y
         self.position_x += self.change_x
 
-        # See if the ball hit the edge of the screen. If so, change direction
-        if self.position_x < self.width/2:
-            self.position_x = self.width/2
-
-        if self.position_x > SCREEN_WIDTH - self.width/2:
-            self.position_x = SCREEN_WIDTH - self.width/2
-
-        if self.position_y < self.height/2:
-            self.position_y = self.height/2
-
-        if self.position_y > SCREEN_HEIGHT - self.height/2:
-            self.position_y = SCREEN_HEIGHT - self.height/2
-
-
+        self.position_x = np.clip(self.position_x, self.width/2, SCREEN_WIDTH - self.width/2)
+        self.position_y = np.clip(self.position_y, self.height/2, SCREEN_HEIGHT - self.height/2)
+        
 class Ball:
     def __init__(self, position_x, position_y, change_x, change_y, radius, color):
 
@@ -68,22 +58,8 @@ class Ball:
         self.position_y += self.change_y
         self.position_x += self.change_x
 
-        # See if the ball hit the edge of the screen. If so, change direction
-        if self.position_x < self.radius:
-            self.position_x = self.radius
-
-        if self.position_x > SCREEN_WIDTH - self.radius:
-            self.position_x = SCREEN_WIDTH - self.radius
-
-        if self.position_y < self.radius:
-            self.position_y = self.radius
-
-        if self.position_y > SCREEN_HEIGHT - self.radius:
-            self.position_y = SCREEN_HEIGHT - self.radius
-
-
-
-
+        self.position_x = np.clip(self.position_x, self.radius, SCREEN_WIDTH - self.radius)
+        self.position_y = np.clip(self.position_y, self.radius, SCREEN_HEIGHT - self.radius)
 
 class MyGame(arcade.Window):
 
