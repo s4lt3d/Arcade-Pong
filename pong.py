@@ -13,10 +13,8 @@ SCREEN_TITLE = "Pong"
 MOVEMENT_SPEED = 2
 PADDLE_MOVEMENT_SPEED = 1.25
 
-
 PLAYER1_UP = arcade.key.W
 PLAYER1_DOWN = arcade.key.S
-
 
 PLAYER2_UP = arcade.key.UP
 PLAYER2_DOWN = arcade.key.DOWN
