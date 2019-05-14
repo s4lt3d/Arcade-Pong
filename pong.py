@@ -73,6 +73,7 @@ class Paddle:
         self.bottom_left_y = self.position_y - self.height/2
         
 class Ball:
+   
     def __init__(self, position_x, position_y, change_x, change_y, width, color):
 
         # Take the parameters of the init function above, and create instance variables out of them.
@@ -97,10 +98,12 @@ class Ball:
         if self.position_x < self.width/2:
             self.position_x = self.width/2
             self.change_x *= -1
+            MyGame.game_over(1)
 
         if self.position_x > SCREEN_WIDTH - self.width/2:
             self.position_x = SCREEN_WIDTH - self.width/2
             self.change_x *= -1
+            MyGame.game_over(2)
 
         if self.position_y < self.width/2:
             self.position_y = self.width/2
@@ -136,9 +139,11 @@ class Ball:
         return self.collision
 
 class MyGame(arcade.Window):
-
+    player1_score = 0
+    player2_score = 0
+    start_new_round = False
+    
     def __init__(self, width, height, title):
-
         # Call the parent class's init function
         super().__init__(width, height, title)
 
@@ -147,9 +152,29 @@ class MyGame(arcade.Window):
         self.set_mouse_visible(False)
 
         arcade.set_background_color(arcade.color.ASH_GREY)
-
-        # Create our ball
-        self.ball = Ball(50, 50, 1, 1, 16, arcade.color.WHITE)
+        
+        MyGame.player1_score = 0
+        MyGame.player2_score = 0
+        
+        self.new_round()
+    
+    @staticmethod
+    def game_over(winner):
+        if winner == 1:
+            MyGame.player1_score = MyGame.player1_score + 1
+        else:
+            MyGame.player2_score = MyGame.player2_score + 1
+        MyGame.start_new_round = True
+        
+    def new_round(self):
+        MyGame.start_new_round = False
+        
+        self.ball = Ball(SCREEN_WIDTH/2 + np.random.choice([-10,0,10]), 
+                         SCREEN_HEIGHT/2 + + np.random.choice([-10,0,10]), 
+                         np.random.choice([-1,1]), 
+                         np.random.choice([-1,1]), 
+                         16, 
+                         arcade.color.WHITE)
         self.paddle1 = Paddle(8, 120, 0, 0, 16, 48, arcade.color.BLUE, 1)
         self.paddle2 = Paddle(SCREEN_WIDTH - 8, 120, 0, 0, 16, 48, arcade.color.RED, 2)
 
@@ -159,12 +184,16 @@ class MyGame(arcade.Window):
         self.ball.draw()
         self.paddle1.draw()
         self.paddle2.draw()
-        arcade.draw_text("12", 10, SCREEN_HEIGHT-25, color=arcade.color.WHITE, font_name="COURIER NEW", font_size=20)
-        arcade.draw_text("12", SCREEN_WIDTH - 50, SCREEN_HEIGHT-25, color=arcade.color.WHITE, font_name="COURIER NEW", font_size=20)
-        if self.ball.check_collision(self.paddle1) or self.ball.check_collision(self.paddle2):
-            arcade.draw_text("Collision", 50, SCREEN_HEIGHT-85, color=arcade.color.WHITE, font_name="COURIER NEW", font_size=20)    
-
+        self.ball.check_collision(self.paddle1)
+        self.ball.check_collision(self.paddle2)
+        
+        arcade.draw_text(str(MyGame.player1_score), 10, SCREEN_HEIGHT-25, color=arcade.color.WHITE, font_name="COURIER NEW", font_size=20)
+        arcade.draw_text(str(MyGame.player2_score), SCREEN_WIDTH - 50, SCREEN_HEIGHT-25, color=arcade.color.WHITE, font_name="COURIER NEW", font_size=20)
+        
     def update(self, delta_time):
+        if MyGame.start_new_round == True:
+            self.new_round()
+            
         self.ball.update()
         self.paddle1.update()
         self.paddle2.update()
